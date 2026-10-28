@@ -517,10 +517,10 @@ const PixelArt = (() => {
   function tatami(p, t, seed) {
     const { x, y, w, h } = t, tall = h > w, HERI = 3;
     p.rect(x, y, w, h, '#b8b06c');
-    if (tall) { for (let j = 0; j < h; j++) if ((j >> 1) & 1) p.rect(x, y + j, w, 1, '#aca462'); }   // 畳の目
-    else      { for (let i = 0; i < w; i++) if ((i >> 1) & 1) p.rect(x + i, y, 1, h, '#aca462'); }
-    if (tall) { for (let i = 6; i < w; i += 9) p.speckleRect(x + i, y, 1, h, '#a39b5c', 0.5, seed + i); } // 経糸
-    else      { for (let j = 6; j < h; j += 9) p.speckleRect(x, y + j, w, 1, '#a39b5c', 0.5, seed + j); }
+    if (tall) { for (let i = 0; i < w; i++) if ((i >> 1) & 1) p.rect(x + i, y, 1, h, '#aca462'); }   // 畳の目（長い方向に線が通る）
+    else      { for (let j = 0; j < h; j++) if ((j >> 1) & 1) p.rect(x, y + j, w, 1, '#aca462'); }
+    if (tall) { for (let j = 6; j < h; j += 9) p.speckleRect(x, y + j, w, 1, '#a39b5c', 0.5, seed + j); } // 横糸
+    else      { for (let i = 6; i < w; i += 9) p.speckleRect(x + i, y, 1, h, '#a39b5c', 0.5, seed + i); }
     p.speckleRect(x, y, w, h, '#c8c07e', 0.04, seed + 1);
     p.speckleRect(x, y, w, h, '#9c9558', 0.03, seed + 2);
     // 畳の境目（縁のない短い辺）
@@ -537,15 +537,13 @@ const PixelArt = (() => {
   }
 
   // 炉（風炉の季節の姿）。炉蓋畳（炉に畳で蓋をしたもの）。半畳の1/4（48×48）をいっぱいに使う。
-  // 畳の色も目の線も、となりの畳（r.mat）とぴったり同じ位置にそろえる。右の辺には、
+  // 畳の中身は、下の畳（r.mat）の絵をそのまま使う。右の辺には、
   // 炉蓋畳の縁と、炉を切ったほうの畳の縁が、2本並んで見える（写真のとおり）
   function ro(p, r) {
     const { x, y, w, h } = r, m = r.mat, HERI = 3;
     const lw = w - HERI;                                    // 炉蓋畳の幅（右の3点は、切ったほうの畳の縁）
     const ix = x + 1, iy = y + 1, iw = lw - 2, ih = h - 2;
-    p.rect(ix, iy, iw, ih, '#b8b06c');
-    for (let j = 0; j < ih; j++) if ((((iy + j) - m.y) >> 1) & 1) p.rect(ix, iy + j, iw, 1, '#aca462');   // 畳の目
-    for (let X = m.x + 6; X < ix + iw; X += 9) if (X >= ix) p.speckleRect(X, iy, 1, ih, '#a39b5c', 0.5, m.seed + (X - m.x));   // 経糸
+    // 蓋の畳の中は、下の畳の絵をそのまま使う（同じ素材・同じ線）。切れ目の線と縁だけを上に描く
     p.rect(x, y, lw, 1, '#8d8650'); p.rect(x, y + h - 1, lw, 1, '#8d8650');   // 炉の切れ目（まわりの線）
     p.rect(x, y, 1, h, '#8d8650');
     p.rect(ix + iw - HERI, y, HERI, h, '#2d2b33');                          // 炉蓋畳の縁（右の1辺。上下の切れ目の線も縁でうめる）
