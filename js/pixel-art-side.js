@@ -422,11 +422,12 @@ const PixelArtSide = (() => {
     // 建水（唐銅）
     kensui: {
       w: 16, h: 18, ax: 8, ay: 14, top: 7, inner: 2,
-      draw(q) {
+      draw(q, state) {
         const t = solid(q, 8, 14, [5.3, 6.5, 7.2, 7.6, 7.6, 7.6, 7.6], { dark: '#4a3b20', base: '#8a7240', light: '#bba062' });
         flat(q, 8, t, 7.6, '#c8ae70');                    // 口縁
         flat(q, 8, t, 6.4, '#33291a');                    // 内側
         flat(q, 8, t + 1, 4.6, '#3c3020');
+        if (state === 'nigori') { flat(q, 8, t + 0.5, 6, '#7d7a5a'); flat(q, 8, t + 0.5, 4.8, '#9c9a74'); }   // 少し濁った水
       }
     },
 

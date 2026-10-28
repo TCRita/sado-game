@@ -73,7 +73,7 @@ const ChasenGame = (() => {
     else if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); stroke(-1); }
   }
 
-  const ph = () => PHASES[s.phase].id;
+  const ph = () => (PHASES[s.phase] || {}).id;   // 最後のあと（終わった直後）にも呼ばれるので、なくても止まらないように
   function say(msg, kind) { s.msg = msg; s.msgKind = kind; }
 
   function showPhase() {

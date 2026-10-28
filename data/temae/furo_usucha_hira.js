@@ -57,10 +57,10 @@ registerTemae({
     "furosaki":       { "x": 17,  "y": 21,  "label": "風炉先（蝶番を向こうの勝手付の角に）" },
     "furo":           { "x": 45,  "y": 74,  "label": "風炉（敷板は勝手付から5目・前の端が半畳から16目）" },
     "mizusashi":      { "x": 90,  "y": 74,  "label": "水指（中心が畳の客付側1/4の線・釜の蓋と前後をそろえる）" },
-    "mizusashi_za":   { "x": 90,  "y": 124, "label": "水指の前（置き合わせるときの座）" },
-    "chawan_oki":     { "x": 84,  "y": 100, "label": "水指の前・左（茶碗。茶杓の櫂先が水指の手前の線にちょうど来る位置）" },
-    "natsume_oki":    { "x": 101, "y": 100,  "label": "水指の前・右（棗）" },
-    "za":             { "x": 66,  "y": 138, "label": "点前座（畳の真ん中・膝頭が半畳の線）" },
+    "mizusashi_za":   { "x": 90,  "y": 133, "label": "水指の前（置き合わせるときの座）" },
+    "chawan_oki":     { "x": 81,  "y": 98,  "label": "水指の前・左（茶碗。茶杓の櫂先が水指の手前の線にちょうど来る位置）" },
+    "natsume_oki":    { "x": 98,  "y": 98,   "label": "水指の前・右（棗）" },
+    "za":             { "x": 66,  "y": 147, "label": "点前座（畳の真ん中・膝頭が半畳の線。体は前後66cmなので、中心は線より33cm手前）" },
     "kensui_oki":     { "x": 35,  "y": 122, "label": "建水（膝と同じ高さ・勝手付寄り）" },
     "kensui_tenari":   { "x": 34,  "y": 146, "label": "建水（座ったときの手なりの仮の位置）" },
     "kensui_ue":      { "x": 35,  "y": 108, "label": "建水の上（建水のすぐ風炉側。真上ではない）" },
@@ -79,12 +79,15 @@ registerTemae({
     "natsume_te":     { "x": 58,  "y": 127, "dz": 10, "label": "棗（左手のひらにのせる）" },
     "natsume_shomen": { "x": 92,  "y": 128, "label": "棗（内隅を向いた自分の正面）" },
     "fukusa_natsume": { "x": 90,  "y": 142, "dz": 8,  "label": "帛紗（棗を清める）" },
-    "natsume_kazari": { "x": 88,  "y": 105, "label": "棗の飾り場所（炉の角の目安から5目5目。正面はお正客様の方）" },
+    "natsume_kazari": { "x": 124.5, "y": 121.5, "label": "棗の飾り場所（炉蓋畳の内隅から5目・5目。正面はお正客様の方）" },
+    "natsume_hiza":   { "x": 90,  "y": 127, "dz": 8,  "label": "棗（内隅を向いたあと、膝頭の前に持っていく）" },
+    "fukusa_naka":    { "x": 91.5, "y": 126, "dz": 10, "label": "帛紗（内隅と自分のまんなか。点前について行く）" },
+    "fukusa_taiki":   { "x": 72,  "y": 128, "dz": 14, "label": "帛紗（膝の上で浮かせて、清め終わるまで手から離さない）" },
     "chashaku_te":    { "x": 60,  "y": 124, "dz": 10, "label": "茶杓（左手に持つ）" },
-    "chashaku_kazari": { "x": 109, "y": 105, "label": "茶杓の飾り場所（棗ひとつ分あけて、縁から1目。節を棗の中心に合わせる）" },
+    "chashaku_kazari": { "x": 124.5, "y": 139, "label": "茶杓の飾り場所（棗より棗ひとつ分下。節を棗の中心に合わせる）" },
     "futaoki_te":     { "x": 66,  "y": 114, "dz": 16, "label": "蓋置（柄杓の節の真下で持つ）" },
-    "chawan_tori_za": { "x": 48,  "y": 138, "label": "茶碗を取りに行って座る所" },
-    "hishaku_kumu":   { "x": 70,  "y": 106, "dz": 20, "label": "柄杓（汲める手で持つ。柄は畳と平行）" },
+    "chawan_tori_za": { "x": 48,  "y": 147, "label": "茶碗を取りに行って座る所" },
+    "hishaku_kumu":   { "x": 48,  "y": 106, "dz": 20, "label": "柄杓（汲める手で持つ。柄は畳と平行。自分の真正面に、横にして持つ）" },
     "kensui_sage":    { "x": 33,  "y": 132, "label": "建水を下げた所（勝手付から1目・風炉先から合ひとつ分）" },
     "futaoki_oki":    { "x": 26,  "y": 90,  "label": "蓋置（屏風と敷板の間・敷板の前の端の線で半分）" },
     "hishaku_kamae":  { "x": 66,  "y": 104, "dz": 26, "label": "鏡柄杓（自分の真正面の空中に構える）" },
@@ -104,7 +107,7 @@ registerTemae({
     "chawan":    { "place": "machi", "dx": -6, "state": "empty", "hidden": true },
     "chakin":    { "on": "chawan", "how": "in", "dy": -6, "pose": "tate" },
     "chasen":    { "on": "chawan", "how": "in", "dx": -1, "dy": 2, "dz": 5, "pose": "shikumi" },
-    "chashaku":  { "on": "chawan", "how": "on", "dx": 7, "state": "fuse" },
+    "chashaku":  { "on": "chawan", "how": "on", "dx": 7, "dy": 2, "state": "fuse" },   // 櫂先が水指の手前の線にちょうど来る高さ
     "natsume":   { "place": "machi", "dx": 14, "hidden": true },
     "kensui":    { "place": "machi", "hidden": true },
     "futaoki":   { "on": "kensui", "how": "in", "dx": -2, "dy": 1 },
@@ -281,10 +284,10 @@ registerTemae({
     {
       "id": "chawan-06", "type": "quiz",
       "name": "茶杓の先",
-      "question": "茶碗を置き合わせるとき、茶杓の先（櫂先）は？",
-      "choices": ["水指にかからないようにする", "水指にかけて置く", "棗の上に乗せる"],
-      "answer": "水指にかからないようにする",
-      "explain": "茶杓の先が水指にかからないようにして置きます。"
+      "question": "茶碗を置き合わせるとき、茶杓の先（櫂先）はどこに合わせる？",
+      "choices": ["水指の手前（下）の線にちょうど来るようにする", "水指にかけて置く", "棗の上に乗せる"],
+      "answer": "水指の手前（下）の線にちょうど来るようにする",
+      "explain": "水指にかからないようにする、というだけではありません。茶杓の櫂先が、水指の手前（下）の線にちょうど来る位置に置きます。そのために、茶碗と棗の前後の高さも合わせます。"
     },
     {
       "id": "chawan-07", "type": "quiz",
@@ -380,7 +383,7 @@ registerTemae({
       "id": "t03-q1", "type": "quiz",
       "name": "柄杓を傾ける方向",
       "question": "柄杓を蓋置に引くとき、合をどちらへ傾ける？",
-      "choices": ["これから柄杓を置く方向", "自分の正面", "お客様の方"],
+      "choices": ["これから柄杓を置く方向", "真上（天井の方）", "真下（畳の中）"],
       "answer": "これから柄杓を置く方向",
       "explain": "正面ではなく、今から柄杓を置こうとしている方向に傾けます。"
     },
@@ -443,7 +446,7 @@ registerTemae({
       "answer": "「一」の字を書くようにして半分に折る",
       "explain": "（今回は男性のやり方）左手で帛紗を少し下に引き、3分の2を折りたたんで掴み、下に弾きながら自分の前へ持ってくる。右手で一番上の三角のひらひらを掴んで上げると、下向きの三角形ができる。左手でも迎えに行き、逆三角形を自分の前に作る（指は丸めてそろえ、主に両手の親指と人差し指で持つ）。右手を上げて手の甲を上にし、三角形の下を自分の方へ向け、左膝の上あたりで持つ。左手で逆三角形の下の角を掴み、横と下の間の斜めへ滑らせながら下げて折りたたみ、半分にできそうな所で右手を動かして自分の前で重ねる。右手で「一」の字を書くように半分に折り、右手に預け、左手をピンとして上から押し込み、右手で掴む。持っている間は、人差し指を帛紗のすき間に挟んだままにする。",
       "effects": [
-        { "type": "move", "tool": "fukusa", "to": { "place": "te_fukusa", "pose": "" } }
+        { "type": "move", "tool": "fukusa", "to": { "place": "fukusa_taiki", "pose": "" } }   // 棗と茶杓を清め終わるまで、手から離さず膝の上で浮かせて待つ
       ]
     },
     {
@@ -674,6 +677,7 @@ registerTemae({
       "effects": [
         { "type": "move",  "tool": "chawan", "to": { "place": "kensui_oki", "dx": 10, "dy": -4, "dz": 8 } },
         { "type": "state", "tool": "chawan", "state": "empty" },
+        { "type": "state", "tool": "kensui", "state": "nigori" },   // 建水にたまった、少し濁った水
         { "type": "move",  "tool": "chawan", "to": "hiza_mae" }
       ]
     },
@@ -846,6 +850,17 @@ registerTemae({
       "effects": [ { "type": "state", "tool": "chawan", "state": "empty" } ]
     },
     {
+      "id": "k02b",
+      "name": "お客様が1口飲んだら、帛紗を腰につける",
+      "view": "top",
+      "description": "お客様が1口飲まれたら、建水の上に置いていた帛紗を取り、腰につける。",
+      "target": "fukusa",
+      "hint": "建水の上に置いてある赤い布を、腰につけます。",
+      "effects": [
+        { "type": "move", "tool": "fukusa", "to": { "on": "teishu", "dx": -18, "dy": 3, "pose": "koshi" } }
+      ]
+    },
+    {
       "id": "k03", "type": "quiz",
       "name": "拝見",
       "question": "飲み終わった茶碗を拝見するとき、両手で持って見るのはどこ？",
@@ -886,7 +901,8 @@ registerTemae({
       "hint": "汚れを落とした湯は、捨てるための器へ。",
       "effects": [
         { "type": "move",  "tool": "chawan", "to": { "place": "kensui_oki", "dx": 10, "dy": -4, "dz": 8 } },
-        { "type": "state", "tool": "chawan", "state": "empty" }
+        { "type": "state", "tool": "chawan", "state": "empty" },
+        { "type": "state", "tool": "kensui", "state": "nigori" }
       ]
     },
     {
@@ -929,9 +945,7 @@ registerTemae({
       "effects": [
         { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 3, "rot": 270, "pose": "toshi" } },
         { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 12, "rot": 270, "pose": "toshi" } },
-        { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 3, "rot": 270, "pose": "toshi" } },
-        { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 12, "rot": 270, "pose": "toshi" } },
-        { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 3, "rot": 270, "pose": "toshi" } },
+        { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 1, "dz": 3, "rot": 270, "pose": "toshi" } },   // お仕舞いの茶筅通しは1回だけ
         { "type": "move", "tool": "chasen", "to": { "on": "chawan", "how": "in", "dx": 0, "dz": 2, "rot": 0, "pose": "" } },
         { "type": "move", "tool": "chasen", "to": { "place": "natsume_oki", "rot": 0, "pose": "" } }
       ]
@@ -945,7 +959,8 @@ registerTemae({
       "hint": "すすいだ水は、捨てるための器へ。",
       "effects": [
         { "type": "move",  "tool": "chawan", "to": { "place": "kensui_oki", "dx": 10, "dy": -4, "dz": 8 } },
-        { "type": "state", "tool": "chawan", "state": "empty" }
+        { "type": "state", "tool": "chawan", "state": "empty" },
+        { "type": "state", "tool": "kensui", "state": "nigori" }
       ]
     },
     {
@@ -1048,14 +1063,14 @@ registerTemae({
       "hint": "水の入った器から、水を汲みましょう。",
       "effects": [
         { "type": "move", "tool": "hishaku", "to": { "on": "mizusashi", "how": "on", "dy": -4, "rot": 180, "pose": "oki" } },
-        { "type": "move", "tool": "hishaku", "to": { "on": "kama", "how": "on", "dy": -4, "rot": 180, "pose": "oki" } }
+        { "type": "move", "tool": "hishaku", "to": { "place": "hishaku_kumu", "rot": 90, "pose": "" } }   // 水を入れたら、釜の上には置かず、そのまま手に持っておく
       ]
     },
     {
       "id": "u15-2",
       "name": "鏡柄杓をする",
       "view": "host",
-      "description": "水を入れたら、柄杓を左手で節の部分を持ち、右手をピンとして鏡柄杓をする。",
+      "description": "水を入れたら、柄杓を釜の上に置かず、そのまま左手で節の部分を持ち、右手をピンとして鏡柄杓をする。このあと釜の蓋を閉める。",
       "target": "hishaku",
       "hint": "水を入れた柄杓を、鏡柄杓に構え直します。",
       "effects": [
@@ -1161,7 +1176,8 @@ registerTemae({
       "answer": "内隅",
       "explain": "内隅とは、畳に切ってある炉の、内側の線の左内側のあたりのことです。そこを目指して、右へ回ります（45度では足りず、90度では回りすぎ）。",
       "effects": [
-        { "type": "move", "tool": "teishu", "to": { "place": "za", "rot": 65 } }
+        { "type": "move", "tool": "teishu", "to": { "place": "za", "rot": 65 } },
+        { "type": "move", "tool": "natsume", "to": "natsume_hiza" }   // 内隅を向いたら、棗を膝頭の前へ（体にめり込まないように）
       ]
     },
     {
@@ -1208,12 +1224,15 @@ registerTemae({
     },
     {
       "id": "n11",
-      "name": "棗を炉の5目5目に置く",
+      "name": "棗を炉蓋畳の内隅から5目5目に置く",
       "view": "top",
-      "description": "右手で棗の側面を2回回して、正面を180度回転させる。正面が正客様の方を向くようにして、炉の5目・5目の所に置く。",
+      "description": "右手で棗の側面を2回回して、正面を180度回転させる。正面が正客様の方を向くようにして、炉蓋畳の内隅から5目・5目の所に置く。帛紗は、内隅と自分のまんなかで、動き続ける点前について行く。",
       "target": "natsume",
-      "moveTo": "natsume_kazari",
-      "hint": "清めた棗を、お客様に拝見していただく所へ。"
+      "hint": "清めた棗を、お客様に拝見していただく所へ。",
+      "effects": [
+        { "type": "move", "tool": "fukusa", "to": "fukusa_naka" },
+        { "type": "move", "tool": "natsume", "to": { "place": "natsume_kazari", "rot": 180 } }
+      ]
     },
     {
       "id": "n11q", "type": "quiz",
@@ -1259,18 +1278,18 @@ registerTemae({
       "id": "n15",
       "name": "茶杓を置く",
       "view": "top",
-      "description": "左手を少し右回転させ、右手で逆から手首を返して回すようにして、茶杓の節を持つ。左手と右手の両腕を伸ばすようにして、内隅の方へ置く。茶杓は棗ひとつ分あけて、畳の縁から1目あける。茶杓の節の位置と、棗の中心の位置を合わせる。",
+      "description": "左手を少し右回転させ、右手で逆から手首を返して回すようにして、茶杓の節を持つ。左手と右手の両腕を伸ばすようにして、内隅の方へ置く。茶杓は、棗より棗ひとつ分下（亭主の方）に置く。茶杓の節の位置と、棗の中心の位置を合わせる。",
       "target": "chashaku",
-      "moveTo": { "place": "chashaku_kazari", "rot": 0, "state": "up" },
-      "hint": "左手の竹の匙を、棗の横に置きます。"
+      "moveTo": { "place": "chashaku_kazari", "rot": 90, "state": "up" },
+      "hint": "左手の竹の匙を、棗の下（自分の方）に置きます。"
     },
     {
       "id": "n15q", "type": "quiz",
       "name": "茶杓の置き場所",
       "question": "茶杓は、棗とどう離して置く？",
-      "choices": ["棗ひとつ分あけて、畳の縁から1目。節と棗の中心を合わせる", "棗にくっつけて、畳の縁から5目", "棗の上に重ねて置く"],
-      "answer": "棗ひとつ分あけて、畳の縁から1目。節と棗の中心を合わせる",
-      "explain": "茶杓は棗ひとつ分あけて、縁から1目あけて置きます。茶杓の節の位置と棗の中心の位置を合わせます。"
+      "choices": ["棗より棗ひとつ分下に、節と棗の中心を合わせて置く", "棗にくっつけて、内隅に置く", "棗の上に重ねて置く"],
+      "answer": "棗より棗ひとつ分下に、節と棗の中心を合わせて置く",
+      "explain": "茶杓は、棗より棗ひとつ分下（亭主の方）に置きます。茶杓の節の位置と棗の中心の位置を合わせます。"
     },
     {
       "id": "n16",
@@ -1289,11 +1308,11 @@ registerTemae({
       "id": "n17",
       "name": "柄杓を持つ",
       "view": "host",
-      "description": "柄杓を、左手の親指・人差し指・左手首の生命線で持ち、表に返しながら自分の正面に持ってくる。右手で親指・人差し指・生命線の3点で持ち、左手は柄杓の節を持つ。そのあと右手が上から、いつもの3点（親指・人差し指・生命線）で節を持ち、持ち帰る。",
+      "description": "柄杓を、左手の親指・人差し指・左手首の生命線で持ち、表に返しながら自分の正面に持ってくる（鏡柄杓にはせず、柄を畳と平行にして、自分の前に横に持つ）。右手で親指・人差し指・生命線の3点で持ち、左手は柄杓の節を持つ。そのあと右手が上から、いつもの3点（親指・人差し指・生命線）で節を持ち、持ち帰る。",
       "target": "hishaku",
       "hint": "建水の上に伏せてある柄杓を取ります。",
       "effects": [
-        { "type": "move", "tool": "hishaku", "to": { "place": "hishaku_kamae", "rot": 180, "pose": "kagami" } }
+        { "type": "move", "tool": "hishaku", "to": { "place": "hishaku_kumu", "rot": 90, "pose": "" } }   // 鏡柄杓にはせず、柄を畳と平行にして、自分の前に横に持つ
       ]
     },
     {

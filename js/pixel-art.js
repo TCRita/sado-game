@@ -255,12 +255,13 @@ const PixelArt = (() => {
     },
 
     // 水指の蓋（水指の左側に立てかけた形。真上からは細い板に見える）
+    // 絵は「亭主が左」の向きで描くので、横長に描くと、画面（上から）では縦に長く見える（亭主の目線の絵と同じ向き）
     mizusashi_futa: {
-      w: 5, h: 20, draw(p) {
-        p.rect(1, 1, 3, 18, '#e2ded2');
-        p.rect(1, 1, 1, 18, '#f6f3ea'); p.rect(3, 1, 1, 18, '#a8a49a');
-        p.clear(1, 1); p.clear(3, 1); p.clear(1, 18); p.clear(3, 18);
-        p.rect(0, 9, 1, 2, '#cfcabd');                    // つまみ
+      w: 20, h: 5, draw(p) {
+        p.rect(1, 1, 18, 3, '#e2ded2');
+        p.rect(1, 1, 18, 1, '#f6f3ea'); p.rect(1, 3, 18, 1, '#a8a49a');
+        p.clear(1, 1); p.clear(1, 3); p.clear(18, 1); p.clear(18, 3);
+        p.rect(9, 0, 2, 1, '#cfcabd');                    // つまみ
       }
     },
 
@@ -290,12 +291,18 @@ const PixelArt = (() => {
     },
 
     // 建水（唐銅）。直径 約16cm
+    // state: nigori（湯や水を捨てたあと。少し濁った水がたまっている）
     kensui: {
-      w: 16, h: 16, draw(p) {
+      w: 16, h: 16, draw(p, state) {
         p.ball(8, 8, 7.6, '#4a3b20', '#8a7240', '#bba062');
         p.ring(8, 8, 6.3, 5.5, '#5e4c2a');
         p.disc(8.2, 8.2, 5.5, '#33291a');
         p.disc(8.5, 8.5, 4.4, '#3c3020');
+        if (state === 'nigori') {
+          p.disc(8, 8, 5.2, '#7d7a5a'); p.disc(8, 8, 4.4, '#9c9a74');
+          p.speckleDisc(8, 8, 4.4, '#b8b58c', 0.25, 13);
+          p.px(6, 6, '#d8d6b0'); p.px(7, 6, '#d8d6b0');
+        }
         p.px(4, 3, '#d8c080'); p.px(3, 4, '#d8c080');
       }
     },
