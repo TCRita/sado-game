@@ -18,8 +18,15 @@ const ViewTop = (() => {
     { text: '茶道口', x: 100, y: 414 }
   ];
 
+  // お点前ごとの部屋の姿（opt.ro === 'open' なら、炉蓋畳を外して炉縁をはめた形）。ラベルの位置も合わせる
+  function setRoom(opt = {}) {
+    board = PixelArt.room(opt);
+    const lab = LABELS.find(l => l.text === '炉');
+    if (lab) { lab.x = opt.ro === 'open' ? 118 : 132; lab.y = opt.ro === 'open' ? 111 : 126; }
+  }
+
   function init(tools) {
-    board = PixelArt.room();
+    setRoom();
     tools.forEach(t => {
       if (!t.image) return;
       const img = new Image();
@@ -123,5 +130,5 @@ const ViewTop = (() => {
     return null;
   }
 
-  return { W, H, init, draw, hit, boardCanvas: () => board, photo: id => photos[id] };
+  return { W, H, init, setRoom, draw, hit, boardCanvas: () => board, photo: id => photos[id] };
 })();

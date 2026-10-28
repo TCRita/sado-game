@@ -19,7 +19,10 @@ const Scene = (() => {
   function hostName(it) {
     const base = it.tool.sprite || it.tool.id;
     if (it.pose && PixelArtSide.has(base + '_' + it.pose)) return base + '_' + it.pose;
-    if (base === 'hishaku') return it.rot === 90 || it.rot === 270 ? 'hishaku_yoko' : 'hishaku_hiki';
+    if (base === 'hishaku') {
+      const r = (((it.rot || 0) % 360) + 360) % 360;      // 横向き（右か左）に近ければ、横に寝かせた形。斜めに掛けたときも、これを使う
+      return (r >= 45 && r < 135) || (r >= 225 && r < 315) ? 'hishaku_yoko' : 'hishaku_hiki';
+    }
     return PixelArtSide.has(base) ? base : null;
   }
   // 上に乗せる高さ・中に入れる高さ

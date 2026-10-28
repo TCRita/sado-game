@@ -104,13 +104,46 @@ const PixelArt = (() => {
   //  道具のドット絵
   //  state … 見た目の状態（茶碗の湯・抹茶、釜の蓋の有無など）
   // ===================================================================
+  // 菓子器に盛るお菓子（1つの器に1種類）。上から見た絵
+  const SWEETS = {
+    manju(p) {                                                    // 饅頭
+      [[9.2, 10], [14.8, 10], [12, 15]].forEach(([x, y]) => {
+        p.disc(x, y, 3, '#d6cbb0'); p.disc(x - 0.3, y - 0.3, 2.6, '#f7f2e6');
+        p.px(x - 1, y - 1, '#ffffff'); p.px(x + 1, y + 1, '#e6a8b6');   // 艶と、焼き印のような桃色
+      });
+    },
+    sakura(p) {                                                   // 桜の干菓子（五弁の小さな花）
+      [[8.5, 8.5], [15.5, 8.5], [8.5, 15.5], [15.5, 15.5]].forEach(([x, y]) => {
+        for (let k = 0; k < 5; k++) {
+          const [px, py] = around(x, y, 1.5, k * 72 - 90);
+          p.disc(px, py, 1, '#ec9fb4');
+        }
+        p.disc(x, y, 0.8, '#fbe0e6');
+      });
+    },
+    momiji(p) {                                                   // 紅葉の干菓子
+      [[8.5, 8.5], [15.5, 8.5], [8.5, 15.5], [15.5, 15.5]].forEach(([x, y], i) => {
+        const c = i % 2 ? '#d9662f' : '#e0803a';
+        p.disc(x, y, 2, c); p.disc(x - 1.5, y - 0.8, 1, c); p.disc(x + 1.5, y - 0.8, 1, c);   // 三つに分かれた葉
+        p.px(x, y + 2, '#9a3f1c'); p.px(x, y + 1, '#b8501f');
+      });
+    },
+    kinton(p) {                                                   // きんとん
+      p.disc(12, 12, 5.2, '#d8b447');
+      p.speckleDisc(12, 12, 5.2, '#ecd27a', 0.4, 5);
+      p.speckleDisc(12, 12, 5.2, '#b8942e', 0.2, 9);
+      p.disc(12.3, 12.3, 1.2, '#7a5a3a');
+    }
+  };
+
+  const PERSON_W = 66, PERSON_H = 58;   // 座った人の絵の大きさ（前後66 × 肩幅58）。personBig で描く
   const SPRITES = {
 
     // 亭主（真上から見て、右を向いて座っている）。1ドット＝1cm に合わせて、座った人の大きさ（約50cm）にしてある
-    teishu: { w: 48, h: 51, draw(p) { person(p, { body: '#2f3a5e', bodyD: '#19213a', lap: '#34406a', lapD: '#1d2640', hi: '#3c4a74' }); } },
+    teishu: { w: PERSON_W, h: PERSON_H, draw(p) { personBig(p, { body: '#2f3a5e', bodyD: '#19213a', lap: '#34406a', lapD: '#1d2640', hi: '#3c4a74' }); } },
 
     // お客様（亭主と同じ形で、着物の色を変えたもの）
-    kyaku: { w: 48, h: 51, draw(p) { person(p, { body: '#4a5e3a', bodyD: '#2a3620', lap: '#56704a', lapD: '#2e3c24', hi: '#62784e' }); } },
+    kyaku: { w: PERSON_W, h: PERSON_H, draw(p) { personBig(p, { body: '#4a5e3a', bodyD: '#2a3620', lap: '#56704a', lapD: '#2e3c24', hi: '#62784e' }); } },
 
     // 風炉先屏風（二つ折り。真上から見た線）
     // 蝶番を点前畳の向こうの角に置き、直角に折って「釜の奥」と「勝手付」の2面に立てる。1面 約88cm
@@ -180,6 +213,35 @@ const PixelArt = (() => {
           p.disc(11, 11, 1.5, '#2a221a');                       // つまみ
           p.px(10, 10, '#a08a68');
         }
+      }
+    },
+
+    // 炉の釜（炉にはまっている形）。羽（はば）が炉縁の内側いっぱいに広がる。直径 約27cm（羽まで）
+    // state: closed / kiru（蓋を手前に切る）/ open
+    kama_ro: {
+      w: 30, h: 30, draw(p, state) {
+        p.rect(13, 0, 4, 3, '#2a2622'); p.rect(13, 27, 4, 3, '#2a2622');   // 鐶付（亭主から見て左右）
+        p.disc(15, 15, 14.2, '#1a1816');                                    // 羽（釜のまわりのつば）
+        p.ring(15, 15, 14.2, 12.6, '#3e3a35');
+        p.each(15, 15, 15, (dx, dy, d) => d <= 14 && d > 12.8 && (dx + dy) < -8, '#5a554e');
+        p.ball(15, 15, 11.6, '#1a1816', '#35312c', '#5a554e');              // 釜の肩
+        for (let y = 3; y < 28; y += 3) for (let x = 3; x < 28; x += 3) {   // 霰
+          const d = Math.hypot(x + 0.5 - 15, y + 0.5 - 15);
+          if (d > 8.6 && d < 10.8) p.px(x, y, '#24211e');
+        }
+        const lid = cx => {
+          p.ring(cx, 15, 8.2, 7.4, '#121010');
+          p.ball(cx, 15, 7.4, '#3a3026', '#5a4a38', '#867058');             // 唐銅の蓋
+          p.disc(cx, 15, 1.7, '#2a221a');                                   // つまみ
+          p.px(cx - 1, 14, '#a08a68');
+        };
+        if (state === 'open' || state === 'kiru') {
+          p.disc(15, 15, 7.4, '#0d1216'); p.disc(15, 15, 6.6, '#2a4a5c');
+          p.speckleDisc(15, 15, 6, '#3d6578', 0.25, 5);
+          p.px(12, 12, '#8ab8cc'); p.px(13, 12, '#8ab8cc'); p.px(12, 13, '#8ab8cc');
+        }
+        if (state === 'kiru') lid(12);            // 蓋を亭主の方（左）へ少しずらす
+        else if (state !== 'open') lid(15);
       }
     },
 
@@ -401,20 +463,22 @@ const PixelArt = (() => {
       }
     },
 
-    // 菓子器（干菓子の盆）
+    // 菓子器（陶器の丸い器）。1つの器には、同じ種類のお菓子だけを入れる。
+    // state … お菓子の種類：manju（饅頭）/ sakura（桜の干菓子）/ momiji（紅葉の干菓子）/ kinton（きんとん）。省略すると manju。
+    // お菓子の種類を足したいときは、下の SWEETS に書き足し、pixel-art-side.js の SWEET_COLOR にも色を足す
     kashiki: {
-      w: 30, h: 22, draw(p) {
-        p.rect(2, 1, 26, 20, '#120d0b');
-        p.rect(1, 2, 28, 18, '#120d0b');
-        p.rect(3, 3, 24, 16, '#2a1f1a');
-        p.rect(3, 2, 24, 1, '#4e423a');
-        p.rect(2, 3, 1, 15, '#3e342e');
-        // 干菓子
-        p.disc(8, 8, 2.8, '#e7a2b6'); p.px(7, 7, '#fbe0e6'); p.px(8, 7, '#fbe0e6');    // 花の形
-        p.disc(14, 7, 2.4, '#efe5cf'); p.px(14, 7, '#d6c9aa');                         // 落雁
-        p.ellipse(18, 13, 3.6, 1.9, '#8db35c'); p.rect(15, 13, 6, 1, '#6e9442');      // 葉の形
-        p.disc(9, 14, 2.1, '#e9c95f'); p.px(8, 13, '#f6e4a0');                         // 黄色の干菓子
-        p.rect(21, 5, 4, 4, '#efe5cf'); p.rect(21, 8, 4, 1, '#d6c9aa'); p.rect(24, 5, 1, 4, '#d6c9aa');
+      w: 24, h: 24, draw(p, state) {
+        p.disc(12.4, 12.8, 11.4, '#6f6656');                           // 器の影
+        p.ball(12, 12, 11.2, '#b7ad96', '#f1ead8', '#fffaf0');         // 釉薬のかかった、丸い器
+        p.ring(12, 12, 11, 8.4, '#ebe3cf');                            // ふち
+        for (let a = 0; a < 360; a += 30) {                            // ふちの染付の点
+          const [x, y] = around(12, 12, 9.7, a);
+          p.px(x, y, '#7a98c0');
+        }
+        p.ring(12, 12, 8.6, 8, '#cfc5ad');                             // 内側の線
+        p.disc(12, 12, 8, '#dcd2bb');                                  // 器の内側
+        p.disc(12.3, 12.3, 7.2, '#f0e9d8');
+        (SWEETS[state] || SWEETS.manju)(p);
       }
     },
 
@@ -432,6 +496,13 @@ const PixelArt = (() => {
   // 座っている人（真上から見た姿・右向き）。着物の色だけ変えて使い回す
   // もとは 28×30 の絵。PERSON 倍に拡大して描く（1ドット＝1cm で、座った人が約50cm）
   const PERSON = 1.7;
+  // 実際の座った人は、前後（膝〜背中）が長く、肩幅はそれより狭い。もとの絵（48×51）を、前後に長く引きのばして使う
+  function personBig(p, k) {
+    const t = painter(48, 51);
+    person(t, k);
+    p.ctx.imageSmoothingEnabled = false;
+    p.ctx.drawImage(t.canvas, 0, 0, PERSON_W, PERSON_H);
+  }
   function person(p, k) {
     const s = PERSON, v = n => n * s, r = n => Math.round(n * s);
     const rect = (x, y, w, h, c) => p.rect(r(x), r(y), Math.max(1, r(w)), Math.max(1, r(h)), c);
@@ -553,7 +624,32 @@ const PixelArt = (() => {
     for (let j = 1; j < h; j += 4) p.px(x + lw + 1, y + j, '#34323e');
   }
 
-  function room() {
+  // 炉（冬の姿）。炉蓋畳を外して、炉縁（黒塗りの木枠）をはめ込んだ形。中は灰（釜は別の道具として上に置く）。
+  // 切った畳の右の辺には、風炉の季節と同じ縁が見える。炉縁の右の辺は、その縁にぴったり接する
+  function roOpen(p, r) {
+    const { x, y, w, h } = r, HERI = 3;
+    const lw = w - HERI, FR = 6;                           // 切ったところの幅 / 炉縁の木枠の太さ
+    const fx = x, fy = y + (h - lw), fw = lw;               // 炉縁は 45×45 の正方形（上に 3 点のすき間）
+    p.rect(x, y, lw, h, '#1d1b22');                         // 切り口（影）
+    p.rect(x, y, lw, 1, '#8d8650'); p.rect(x, y, 1, h, '#8d8650');
+    p.rect(x + lw, y, HERI, h, '#1d1b22');                  // 炉を切ったほうの畳の縁
+    for (let j = 1; j < h; j += 4) p.px(x + lw + 1, y + j, '#34323e');
+    // 炉縁（黒塗り）
+    p.rect(fx, fy, fw, fw, '#14121a');
+    p.rect(fx, fy, fw, 1, '#3c394a'); p.rect(fx, fy, 1, fw, '#3c394a');            // 艶（左・上）
+    p.rect(fx + fw - 1, fy, 1, fw, '#0a090d'); p.rect(fx, fy + fw - 1, fw, 1, '#0a090d');
+    p.rect(fx + 2, fy + 2, fw - 4, 1, '#2a2733'); p.rect(fx + 2, fy + 2, 1, fw - 4, '#2a2733');   // 角の面取り
+    const ix = fx + FR, iy = fy + FR, iw = fw - FR * 2;
+    p.rect(ix - 1, iy - 1, iw + 2, iw + 2, '#0a090d');                               // 内側の縁
+    // 灰
+    p.rect(ix, iy, iw, iw, '#b9b2a2');
+    p.speckleRect(ix, iy, iw, iw, '#a39c8c', 0.22, 61);
+    p.speckleRect(ix, iy, iw, iw, '#d0c9b8', 0.12, 62);
+    p.rect(ix, iy, iw, 2, '#8a8374'); p.rect(ix, iy, 2, iw, '#8a8374');               // 奥と左は少し影
+    for (let k = 4; k < iw - 3; k += 5) p.rect(ix + 3, iy + k, iw - 6, 1, '#a59e8e'); // 灰形の筋
+  }
+
+  function room(opt = {}) {
     const R = ROOM, p = painter(R.W, R.H);
     // 壁
     p.rect(0, 0, R.W, R.H, '#cbb68c');
@@ -568,7 +664,7 @@ const PixelArt = (() => {
     p.rect(R.x0 - 2, R.y0 - 2, R.x1 - R.x0 + 4, R.y1 - R.y0 + 4, '#6a4a2a');
     // 畳
     R.tatami.forEach((t, i) => tatami(p, t, 31 + i * 10));
-    if (R.ro) ro(p, R.ro);
+    if (R.ro) (opt.ro === 'open' ? roOpen : ro)(p, R.ro);
     // 敷居（茶道口）
     p.rect(R.door.x, R.y1, R.door.w, 4, '#9a7650');
     p.rect(R.door.x, R.y1 + 2, R.door.w, 1, '#6e5236');

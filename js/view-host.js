@@ -13,6 +13,7 @@ const ViewHost = (() => {
   const flatCache = {}, alphaCache = new Map();
 
   function setCamera(c) { cam = Object.assign({ x0: 0, x1: PixelArt.ROOM.W, far: 0, near: PixelArt.ROOM.H }, c); bg = null; }
+  function invalidate() { bg = null; }
   function size() {
     return { w: Math.round((cam.x1 - cam.x0) * S), h: Math.round((HOR + (cam.near - cam.far) * K + 6) * S) };
   }
@@ -75,8 +76,8 @@ const ViewHost = (() => {
       const def = PixelArtSide.SIDE[name];
       if (layer === 'front' && !def.mouth && !def.layered) return null;
       const c = PixelArtSide.sprite(name, it.state, layer);
-      // 横に寝かせた柄杓は、柄が左向き（rot 270）なら左右反転して使う
-      if (name === 'hishaku_yoko' && it.rot === 270) {
+      // 横に寝かせた柄杓は、柄が左向き（rot 180〜360）なら左右反転して使う
+      if (name === 'hishaku_yoko' && (((it.rot || 0) % 360) + 360) % 360 > 180) {
         const key = `${name}|${it.state || ''}`;
         if (!mirrorCache[key]) mirrorCache[key] = PixelArt.transform(c, 'flip');
         return { c: mirrorCache[key], ax: c.width - def.ax * S, ay: def.ay * S };
@@ -154,5 +155,5 @@ const ViewHost = (() => {
     return null;
   }
 
-  return { setCamera, size, draw, hit, toWorld: unproject };
+  return { setCamera, invalidate, size, draw, hit, toWorld: unproject };
 })();

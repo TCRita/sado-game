@@ -47,6 +47,7 @@ const Temae = (() => {
     idx = 0; mistakes = 0; answers = 0; busy = false; done = false; startAt = Date.now(); orderFor = -1; gameFor = -1; jumped = false;
     finishEl.hidden = true; bannerEl.hidden = true;
     if (typeof ChasenGame !== 'undefined') ChasenGame.stop();
+    ViewTop.setRoom(tm.room || {});
     Scene.load(tools, tm.places, tm.setup);
     Views.setHostCamera(tm.hostCamera || { x0: 4, x1: 144, far: -14, near: 165 });
     Views.select(null);
@@ -55,7 +56,7 @@ const Temae = (() => {
     showStep();
   }
 
-  function stop() { bar.hidden = true; finishEl.hidden = true; bannerEl.hidden = true; tm = null; if (typeof ChasenGame !== 'undefined') ChasenGame.stop(); }
+  function stop() { bar.hidden = true; finishEl.hidden = true; bannerEl.hidden = true; tm = null; ViewTop.setRoom(); ViewHost.invalidate(); if (typeof ChasenGame !== 'undefined') ChasenGame.stop(); }
 
   // 画面上部の帯と、右のパネル
   function showStep(message) {

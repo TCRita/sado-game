@@ -22,6 +22,9 @@ const PixelArtSide = (() => {
   const LACQUER = { dark: '#060505', base: '#1d1815', light: '#6a5f56' };
   const GLAZE = { dark: '#5e4224', base: '#a07a48', light: '#cfab72' };
   const KODAI = { dark: '#5e4224', base: '#8a6a3e', light: '#a8844e' };
+  const CERAMIC = { dark: '#b3a98f', base: '#f1ead8', light: '#fffaf0' };   // 菓子器の釉薬
+  // 菓子器のお菓子の色（state と同じ名前。pixel-art.js の SWEETS と合わせる）
+  const SWEET_COLOR = { manju: ['#f7f2e6', '#d6cbb0'], sakura: ['#ec9fb4', '#f6bccb'], momiji: ['#d9662f', '#e0803a'], kinton: ['#d8b447', '#ecd27a'] };
   const TINES = { dark: '#b8ab86', base: '#e6dcc0', light: '#f4eedc' };
 
   // ---- S 倍の細かさの画用紙。座標は上からの画面と同じ単位で渡す ----
@@ -191,6 +194,48 @@ const PixelArtSide = (() => {
         } else {
           lid(0);
         }
+      }
+    },
+
+    // 菓子器（陶器の丸い器）。state はお菓子の種類（manju / sakura / momiji / kinton）
+    kashiki: {
+      w: 26, h: 20, ax: 13, ay: 17, top: 8, inner: 5,
+      draw(q, state) {
+        const cx = 13, ay = 17;
+        const top = solid(q, cx, ay, [6, 8.5, 10.5, 11.5, 12, 12, 11.5], CERAMIC);   // 丸い器
+        flat(q, cx, top, 11.5, '#ebe3cf');                       // ふち
+        flat(q, cx, top, 9.4, '#dcd2bb');                        // 内側
+        const c = SWEET_COLOR[state] || SWEET_COLOR.manju;
+        [[-6, 0.4], [-2, -1.2], [2.5, 0.4], [6, -1], [0, 1.6]].forEach(([dx, dy], i) => {   // 同じお菓子を盛る
+          q.ellipse(cx + dx, top + dy - 1, 2.2, 1.7, c[i % 2 ? 1 : 0]);
+          q.ellipse(cx + dx - 0.3, top + dy - 1.5, 1, 0.6, '#ffffff');
+        });
+        for (let a = 0; a < 360; a += 40) q.pt(cx + Math.cos(a * Math.PI / 180) * 7.5, ay - 4.5 + Math.sin(a * Math.PI / 180) * 7.5 * K, '#7a98c0'); // 染付の点
+      }
+    },
+
+    // 炉の釜（炉にはまっていて、羽から上だけが見える）。state: closed / kiru / open
+    kama_ro: {
+      w: 32, h: 30, ax: 16, ay: 24, top: 11, inner: 1, mouth: { dy: 6, rx: 6.5 },   // 口に入れた柄杓の合は、釜の手前のふちに隠れる
+      draw(q, state) {
+        const cx = 16, ay = 24;
+        q.ellipse(cx, ay, 14, 14 * K, '#1a1816');         // 羽（炉縁の内側に広がるつば）
+        q.ellipse(cx, ay - 0.6, 13, 13 * K, '#3e3a35');
+        const prof = [10.5, 10.8, 10.5, 9.6, 8.4, 7].map(v => v);
+        const top = solid(q, cx, ay - 1, prof, IRON);
+        for (const dx of [-7, -4, -1, 2, 5, 8]) q.pt(cx + dx, ay - 4, '#2a2622');   // 霰
+        const mouth = solid(q, cx, top + 1, [6.5, 6.5], MOUTH);
+        const lid = dx => {
+          const t = solid(q, cx + dx, mouth + 1, [6, 6, 5.4, 3.8], LID);
+          flat(q, cx + dx, t, 3.3, '#6e5c46');
+          slice(q, cx + dx, t - 1, 1.2, KNOB);
+        };
+        if (state === 'open' || state === 'kiru') {
+          flat(q, cx, mouth, 5.8, '#0d1216'); flat(q, cx, mouth, 5, '#2a4a5c');
+        }
+        if (state === 'kiru') { lid(-2); steam(q, cx + 2, mouth - 9); }
+        else if (state === 'open') { steam(q, cx - 2, mouth - 9); steam(q, cx + 2, mouth - 8); }
+        else lid(0);
       }
     },
 
@@ -414,7 +459,7 @@ const PixelArtSide = (() => {
     hishaku_yoko: {
       w: 64, h: 18, ax: 6, ay: 13,
       draw(q, state) {
-        const ro = state === 'ro';
+        const ro = hishakuType0(state) === 'ro', fuse = String(state || '').includes('fuse');
         const cupR = ro ? 5.5 : 4.5, cupH = ro ? 7 : 6, handle = ro ? 50 : 36, cx = 6;
         const x0 = cx + cupR, x1 = x0 + handle;
         q.line(x0, 13 - cupH + 2, x1, 13, '#e2c890', 0.5);        // 柄（皮目＝上）
@@ -424,7 +469,8 @@ const PixelArtSide = (() => {
         else { q.raw.clear(X1 - 3, Yt + 1, 5, 1); q.raw.clear(X1 - 1, Yt, 3, 1); }      // 風炉用：下（身）を斜めに
         const t = solid(q, cx, 13, new Array(cupH).fill(cupR), BAMBOO); // 合
         flat(q, cx, t, cupR, '#e8d098');
-        flat(q, cx, t, cupR - 0.8, '#5a4022');
+        if (fuse) flat(q, cx, t, cupR - 0.8, '#c9a96c');          // 伏せた形：合の底が上になる
+        else flat(q, cx, t, cupR - 0.8, '#5a4022');
       }
     },
 
