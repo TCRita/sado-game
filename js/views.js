@@ -21,6 +21,20 @@ const Views = (() => {
       c.addEventListener('click', e => onPress(c, e));
     });
     swapBtn.addEventListener('click', () => setMain(main === 'top' ? 'host' : 'top'));
+    // 小窓の位置（右下／右上）。前回の選択を覚えておく
+    const cornerBtn = document.getElementById('corner-view');
+    let corner = 'bottom';
+    try { if (localStorage.getItem('miniCorner') === 'top') corner = 'top'; } catch (e) {}
+    const applyCorner = () => {
+      wrap.classList.toggle('mini-top', corner === 'top');
+      cornerBtn.textContent = corner === 'top' ? '小窓を右下へ' : '小窓を右上へ';
+    };
+    cornerBtn.addEventListener('click', () => {
+      corner = corner === 'top' ? 'bottom' : 'top';
+      try { localStorage.setItem('miniCorner', corner); } catch (e) {}
+      applyCorner();
+    });
+    applyCorner();
     layout();
     requestAnimationFrame(loop);
   }

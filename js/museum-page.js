@@ -24,6 +24,10 @@
     const out = [{ label: '上から', c: PixelArt.transform(PixelArt.sprite(name, ex.state), 'r270') }];
     const hostName = ex.host || (name === 'hishaku' ? 'hishaku_yoko' : name);
     if (PixelArtSide.has(hostName)) out.push({ label: '亭主の目線', c: PixelArtSide.sprite(hostName, ex.state) });
+    if (tool.id === 'kashiki') {                                       // お菓子を1つ、大きく
+      const k = PixelArt.kashikiParts(ex.state);
+      out.unshift({ label: PixelArt.SWEET_NAMES[k.sweet], c: PixelArt.sprite('okashi', k.sweet), big: true });
+    }
     return out;
   }
 
@@ -47,7 +51,7 @@
     const art = d.querySelector('.d-art');
     arts(ex, tool).forEach(a => {
       const f = document.createElement('figure');
-      f.appendChild(enlarged(a.c, 230, 200));
+      f.appendChild(enlarged(a.c, a.big ? 256 : 230, a.big ? 256 : 200));
       f.insertAdjacentHTML('beforeend', `<figcaption>${a.label}</figcaption>`);
       art.appendChild(f);
     });
@@ -70,8 +74,8 @@
         <div class="plate"><span class="name">${text(ex.title || tool.name)}</span><span class="yomi">${text(tool.yomi)}</span>
         <div class="motif">${text(ex.motif)}</div></div>`;
       const fr = el.querySelector('.frame');
-      const list = arts(ex, tool);
-      list.forEach(a => fr.appendChild(enlarged(a.c, list.length > 1 ? 96 : 170, 140)));
+      const list = arts(ex, tool).filter(a => !(tool.id === 'kashiki' && a.label === '亭主の目線'));   // 菓子器の札は、お菓子と上からの2枚だけ（くわしくは詳細で）
+      list.forEach(a => fr.appendChild(enlarged(a.c, a.big ? 128 : (list.length > 1 ? 96 : 170), a.big ? 128 : 140)));
       el.addEventListener('click', () => openDetail(ex, tool));
       g.appendChild(el);
     });

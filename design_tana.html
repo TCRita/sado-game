@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>棚のデザイン</title>
+<style>
+  body { margin: 0; background: #2a2420; color: #efe6d4; font-family: "Hiragino Sans", "Yu Gothic", sans-serif; }
+  h1 { font-size: 22px; padding: 18px 24px 4px; margin: 0; }
+  p.lead { padding: 0 24px; color: #bfb4a2; font-size: 14px; margin: 4px 0 10px; }
+  section { padding: 14px 24px 24px; border-top: 1px solid #443a32; }
+  h2 { font-size: 17px; margin: 0 0 4px; }
+  section p { font-size: 13px; color: #cfc4b2; margin: 0 0 12px; }
+  .row { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-end; }
+  figure { margin: 0; background: #3a322c; padding: 10px; border-radius: 6px; }
+  figcaption { font-size: 14px; margin-top: 6px; }
+  canvas { image-rendering: pixelated; display: block; }
+</style>
+</head>
+<body>
+<h1>棚のデザイン（丸卓・四方卓）</h1>
+<p class="lead">上から見た形と、亭主の目線の形です。違うところ（柱の数・色・高さ・天板の大きさなど）を教えてください。</p>
+
+<section>
+  <h2>1. 丸卓（まるじょく）・真塗</h2>
+  <p>黒の漆塗り（真塗）の木の棚。丸い天板と地板を、木の柱3本でつなぐ。天板の径 約36cm。高さと柱の位置を、いくつか並べました（記号で教えてください）。</p>
+  <div class="row" id="maru"></div>
+</section>
+<section>
+  <h2>2. 四方卓（よほうじょく）</h2>
+  <p>四角い天板と地板を、柱4本でつないだ二段の棚。一辺 約34cm、高さ 約60cm（要確認）。</p>
+  <div class="row" id="yoho"></div>
+</section>
+<section>
+  <h2>3. 道具をのせたところ（風炉の季節）</h2>
+  <p>地板に水指、天板に棗をのせた形。上からの画面では、棚は風炉の右（水指の置き場所）に置いています。</p>
+  <div class="row" id="set"></div>
+</section>
+
+<script src="js/pixel-art.js"></script>
+<script src="js/pixel-art-side.js"></script>
+<script>
+const S = PixelArtSide.S;
+function zoomed(src, k, bg) {
+  const z = document.createElement('canvas'); z.width = src.width * k; z.height = src.height * k;
+  const g = z.getContext('2d'); g.imageSmoothingEnabled = false;
+  if (bg) { g.fillStyle = bg; g.fillRect(0, 0, z.width, z.height); }
+  g.drawImage(src, 0, 0, z.width, z.height); return z;
+}
+function card(row, title, cv) {
+  const f = document.createElement('figure'); f.appendChild(cv);
+  f.insertAdjacentHTML('beforeend', `<figcaption>${title}</figcaption>`);
+  document.getElementById(row).appendChild(f);
+}
+// 上から（画面の向き：亭主が下）
+const topOf = n => PixelArt.transform(PixelArt.sprite(n), 'r270');
+// 亭主の目線：棚 → 地板の道具 → 手前の柱 → 天板の道具
+function sideSet(tana, withTools, st, TH) {
+  const def = PixelArtSide.SIDE[tana], W = 60, H = 92;
+  const c = document.createElement('canvas'); c.width = W * S; c.height = H * S;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+  g.fillStyle = '#b8b06c'; g.fillRect(0, 0, c.width, c.height);
+  const bx = 30, by = 84;                                       // 棚の基準点（地板の中心）
+  const put = (name, state, x, y, layer) => { const d = PixelArtSide.SIDE[name]; g.drawImage(PixelArtSide.sprite(name, state, layer), Math.round((x - d.ax) * S), Math.round((y - d.ay) * S)); };
+  st = st || ''; const top = TH ? TH + 1 : def.top;
+  put(tana, st, bx, by);
+  if (withTools) put('mizusashi', 'closed', bx, by - def.inner);
+  put(tana, st, bx, by, 'front');
+  if (withTools) put('natsume', '', bx, by - top);
+  return c;
+}
+const topSt = st => PixelArt.transform(PixelArt.sprite('tana_maru', st), 'r270');
+card('maru', '上から（柱：向こう1・手前2）', zoomed(topSt(''), 6));
+card('maru', '上から（柱：向こう2・手前1）', zoomed(topSt('b'), 6));
+card('maru', 'A　高さ45cm（柱：向こう1・手前2）', zoomed(sideSet('tana_maru', true, 'h45', 45), 3));
+card('maru', 'B　高さ52cm（柱：向こう1・手前2）', zoomed(sideSet('tana_maru', true, 'h52', 52), 3));
+card('maru', 'C　高さ60cm（柱：向こう1・手前2）', zoomed(sideSet('tana_maru', true, 'h60', 60), 3));
+card('maru', 'D　高さ52cm（柱：向こう2・手前1）', zoomed(sideSet('tana_maru', true, 'h52-b', 52), 3));
+card('yoho', '上から', zoomed(topOf('tana_yoho'), 8));
+card('yoho', '亭主の目線', zoomed(sideSet('tana_yoho', false), 3));
+card('set', '四方卓：亭主の目線', zoomed(sideSet('tana_yoho', true), 3));
+
+// 上から：部屋の一部に、風炉と丸卓（地板の水指は天板に隠れて見えない。天板の棗だけ見える）
+(function () {
+  const board = PixelArt.room();
+  const x0 = 14, y0 = 14, w = 104, h = 110;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+  g.drawImage(board, x0, y0, w, h, 0, 0, w, h);
+  const put = (n, st, x, y) => { const sp = PixelArt.sprite(n, st), a = PixelArt.anchorOf(n, st); g.save(); g.translate(x - x0, y - y0); g.rotate(-Math.PI / 2); g.drawImage(sp, -a.x, -a.y); g.restore(); };
+  put('furo', '', 45, 74); put('kama', 'kiru', 45, 74);
+  put('tana_maru', '', 90, 72); put('natsume', '', 90, 72);
+  card('set', '丸卓：上から（風炉の右）', zoomed(c, 4));
+})();
+</script>
+</body>
+</html>

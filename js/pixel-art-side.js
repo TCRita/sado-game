@@ -24,7 +24,24 @@ const PixelArtSide = (() => {
   const KODAI = { dark: '#5e4224', base: '#8a6a3e', light: '#a8844e' };
   const CERAMIC = { dark: '#b3a98f', base: '#f1ead8', light: '#fffaf0' };   // 菓子器の釉薬
   // 菓子器のお菓子の色（state と同じ名前。pixel-art.js の SWEETS と合わせる）
-  const SWEET_COLOR = { manju: ['#f7f2e6', '#d6cbb0'], sakura: ['#ec9fb4', '#f6bccb'], momiji: ['#d9662f', '#e0803a'], kinton: ['#d8b447', '#ecd27a'] };
+  const SWEET_COLOR = {
+    manju: ['#f7f2e6', '#d6cbb0'], sakura: ['#ec9fb4', '#f6bccb'], momiji: ['#d9662f', '#e0803a'], kinton: ['#d8b447', '#ecd27a'],
+    sakuramochi: ['#eea2b8', '#5f7f34'], dango: ['#f0a8bc', '#9cc070'], ayu: ['#d4ad6c', '#a87a44'], kuzu: ['#dfece7', '#5a3a34'],
+    tsukimi: ['#faf8f0', '#d6cfbe'], tsubaki: ['#f2eee2', '#2f5a2a'], hanabira: ['#fbf8f2', '#f2b8c6'],
+    minazuki: ['#f6f2e8', '#6a2a26'], inoko: ['#a8764a', '#6a4428'], ohagi: ['#6a3430', '#4a2620'], kashiwa: ['#56743a', '#f4f0e4'],
+    kusamochi: ['#6e8a48', '#4e6a34'], mizuyokan: ['#6a2a2a', '#4a1e1e'], nerikiri: ['#f3b4c4', '#f8d4de'],
+    yatsuhashi: ['#efe0c0', '#4a2620'], fumanju: ['#a8c890', '#3f6a2a'], warabi: ['#c8bc98', '#d6a85a'], konpeito: ['#f6b8c8', '#f6e08a'],
+    wasanbon: ['#f6ccd6', '#f8f2e4'], rakugan: ['#f4ecd8', '#f6d2da'], aruhei: ['#fbf6f0', '#e8607a'], kohaku: ['#a8d4ec', '#f4b4c4'],
+    suhama: ['#8eb05e', '#d8b45a'], matsukaze: ['#b97a38', '#efe0bc'], monaka: ['#e2c486', '#c8a468'], yokan: ['#3a1216', '#5a2024'],
+    kanoko: ['#4a1a1a', '#8a2e2a'], kimishigure: ['#f2cc5a', '#7a3a28'], daifuku: ['#f8f4ec', '#e2d8dc'], kintsuba: ['#6a2e26', '#8a4434']
+  };
+  // 菓子器の器の色（横から見た絵）
+  const VESSEL_SIDE = {
+    maru:  { col: CERAMIC, rim: '#ebe3cf', prof: [6, 8.5, 10.5, 11.5, 12, 12, 11.5], dots: '#7a98c0' },
+    rinka: { col: { dark: '#b8a888', base: '#efe4cc', light: '#fffaf0' }, rim: '#c8483a', prof: [6, 8.5, 10.5, 11.5, 12, 12.4, 12.6], dots: '#d0604a' },
+    kaku:  { col: { dark: '#8a7c5c', base: '#e8dcc0', light: '#f6eedc' }, rim: '#4f7a3a', prof: [9, 11, 11.5, 11.5, 11.5, 11.5, 11.5], dots: null },
+    funa:  { col: { dark: '#b8a890', base: '#f3ede2', light: '#fffaf2' }, rim: '#e8b088', prof: [9, 11.5, 12.8, 13], dots: null }
+  };
   const TINES = { dark: '#b8ab86', base: '#e6dcc0', light: '#f4eedc' };
 
   // ---- S 倍の細かさの画用紙。座標は上からの画面と同じ単位で渡す ----
@@ -197,20 +214,63 @@ const PixelArtSide = (() => {
       }
     },
 
-    // 菓子器（陶器の丸い器）。state はお菓子の種類（manju / sakura / momiji / kinton）
+    // 菓子器（陶器）。state は「器:お菓子」（pixel-art.js の kashiki と同じ）
     kashiki: {
-      w: 26, h: 20, ax: 13, ay: 17, top: 8, inner: 5,
+      w: 30, h: 20, ax: 15, ay: 17, top: 8, inner: 5,
       draw(q, state) {
-        const cx = 13, ay = 17;
-        const top = solid(q, cx, ay, [6, 8.5, 10.5, 11.5, 12, 12, 11.5], CERAMIC);   // 丸い器
-        flat(q, cx, top, 11.5, '#ebe3cf');                       // ふち
-        flat(q, cx, top, 9.4, '#dcd2bb');                        // 内側
-        const c = SWEET_COLOR[state] || SWEET_COLOR.manju;
+        const k = PixelArt.kashikiParts(state), v = VESSEL_SIDE[k.vessel], cx = 15, ay = 17;
+        const top = solid(q, cx, ay, v.prof, v.col);
+        const R = v.prof[v.prof.length - 1];
+        flat(q, cx, top, R, v.rim);                              // ふち
+        flat(q, cx, top, R - 1.8, '#e2d8c2');                    // 内側
+        const c = SWEET_COLOR[k.sweet] || SWEET_COLOR.manju;
         [[-6, 0.4], [-2, -1.2], [2.5, 0.4], [6, -1], [0, 1.6]].forEach(([dx, dy], i) => {   // 同じお菓子を盛る
           q.ellipse(cx + dx, top + dy - 1, 2.2, 1.7, c[i % 2 ? 1 : 0]);
           q.ellipse(cx + dx - 0.3, top + dy - 1.5, 1, 0.6, '#ffffff');
         });
-        for (let a = 0; a < 360; a += 40) q.pt(cx + Math.cos(a * Math.PI / 180) * 7.5, ay - 4.5 + Math.sin(a * Math.PI / 180) * 7.5 * K, '#7a98c0'); // 染付の点
+        if (v.dots) for (let a = 0; a < 360; a += 40) q.pt(cx + Math.cos(a * Math.PI / 180) * 7.5, ay - 4.5 + Math.sin(a * Math.PI / 180) * 7.5 * K, v.dots);
+        if (k.vessel === 'kaku') q.rect(cx - 9, ay - 6, 5, 4, '#4f7a3a');   // 織部の緑
+      }
+    },
+
+    // 丸卓（亭主の目線）。真塗の木の棚。天板の上（top）に棗、地板（inner）に水指をのせる。手前の柱は、地板の道具の前に描き直す
+    // state：「h数字」で高さ（cm。省略すると 52）、「b」で柱を向こうに2本・手前に1本
+    tana_maru: {
+      w: 44, h: 74, ax: 22, ay: 68, layered: true, top: 53, inner: 1.5,
+      draw(q, state, layer) {
+        const st = String(state || ''), m = st.match(/h(\d+)/), H = m ? +m[1] : 52;
+        const cx = 22, ay = 68, R = 18;
+        const angs = /(^|-)b($|-)/.test(st) ? [60, 180, 300] : [0, 120, 240];
+        const posts = angs.map(a => { const r = a * Math.PI / 180; return { x: cx + Math.sin(r) * 15.8, y: ay - Math.cos(r) * 15.8 * K, front: Math.cos(r) < 0 }; });
+        const post = p => {                                              // 木の柱（真塗）
+          q.rect(p.x - 0.9, p.y - H, 1.8, H, '#16120f');
+          q.rect(p.x - 0.9, p.y - H, 0.5, H, '#4a4038');
+        };
+        if (layer === 'front') { posts.filter(p => p.front).forEach(post); return; }
+        const board = y => {                                             // 真塗の板（厚み・面・つや）
+          q.ellipse(cx, y + 1.4, R, R * K, '#050404');
+          q.ellipse(cx, y, R, R * K, '#1a1512');
+          q.ellipse(cx - 5, y - 2.2, R * 0.45, R * K * 0.22, '#4a4038');
+        };
+        board(ay);
+        posts.filter(p => !p.front).forEach(post);
+        posts.filter(p => p.front).forEach(post);
+        board(ay - H);
+      }
+    },
+    // 四方卓（亭主の目線）
+    tana_yoho: {
+      w: 44, h: 76, ax: 22, ay: 70, layered: true, top: 61, inner: 1.5,
+      draw(q, state, layer) {
+        const cx = 22, ay = 70, R = 17, D = R * K, H = 60;
+        const posts = [[-R + 1.5, -D + 1], [R - 1.5, -D + 1], [-R + 1.5, D - 1], [R - 1.5, D - 1]].map(([dx, dy]) => ({ x: cx + dx, y: ay + dy, front: dy > 0 }));
+        const post = p => { q.rect(p.x - 1, p.y - H, 2, H, '#7a5a32'); q.rect(p.x - 1, p.y - H, 0.6, H, '#a8844e'); };
+        if (layer === 'front') { posts.filter(p => p.front).forEach(post); return; }
+        q.rect(cx - R, ay - D, R * 2, D * 2 + 1.5, '#7a5a32'); q.rect(cx - R, ay - D, R * 2, D * 2, '#d2b484');   // 地板
+        posts.filter(p => !p.front).forEach(post);
+        posts.filter(p => p.front).forEach(post);
+        q.rect(cx - R, ay - H - D, R * 2, D * 2 + 1.5, '#7a5a32'); q.rect(cx - R, ay - H - D, R * 2, D * 2, '#d2b484');   // 天板
+        q.rect(cx - R, ay - H - D, R * 2, 0.6, '#e8d2a8');
       }
     },
 
@@ -233,7 +293,7 @@ const PixelArtSide = (() => {
         if (state === 'open' || state === 'kiru') {
           flat(q, cx, mouth, 5.8, '#0d1216'); flat(q, cx, mouth, 5, '#2a4a5c');
         }
-        if (state === 'kiru') { lid(-2); steam(q, cx + 2, mouth - 9); }
+        if (state === 'kiru') { lid(-3); steam(q, cx + 3, mouth - 9); }
         else if (state === 'open') { steam(q, cx - 2, mouth - 9); steam(q, cx + 2, mouth - 8); }
         else lid(0);
       }
@@ -251,12 +311,20 @@ const PixelArtSide = (() => {
 
     // 水指の蓋（水指の左側に立てかけた形。横から見ると細い楕円）。基準点は下の端
     mizusashi_futa: {
-      w: 6, h: 18, ax: 3, ay: 17,
+      w: 14, h: 20, ax: 5, ay: 18,
       draw(q) {
-        q.ellipse(3, 9, 2.4, 8, '#a8a49a');
-        q.ellipse(3, 9, 1.9, 7.6, '#e2ded2');
-        q.rect(2, 3, 0.8, 11, '#f6f3ea');
-        q.pt(3, 9, '#4a6aa8');
+        // 立てかけた蓋：下の端を支点に、水指（右）の方へ約14度傾ける
+        const t = painterS(6, 18);
+        t.ellipse(3, 9, 2.4, 8, '#a8a49a');
+        t.ellipse(3, 9, 1.9, 7.6, '#e2ded2');
+        t.rect(2, 3, 0.8, 11, '#f6f3ea');
+        t.pt(3, 9, '#4a6aa8');
+        const g = q.ctx;
+        g.save();
+        g.translate(3 * S + 2 * S, 17 * S + 1 * S);
+        g.rotate(14 * Math.PI / 180);
+        g.drawImage(t.canvas, -3 * S, -17 * S);
+        g.restore();
       }
     },
 
@@ -284,9 +352,10 @@ const PixelArtSide = (() => {
         flat(q, cx, t + 0.8, 7, '#94733f');               // 向こうの壁
         flat(q, cx, t + 2, 4.6, '#b38c58');               // 見込み
         flat(q, cx, t + 2.2, 1.6, '#a07d4c');             // 茶溜まり
-        const liquid = { yu: '#9fb8bb', matcha_yu: '#6c8c38', usucha: '#8db04a' }[state];
+        const liquid = { yu: '#a9c4b8', mizu: '#6f9cc4', matcha_yu: '#6c8c38', usucha: '#8db04a' }[state];
         if (liquid) flat(q, cx, t + 1, 6.6, liquid);
-        if (state === 'yu') { q.pt(cx - 3, t - 0.5, '#e4f0f0'); q.pt(cx - 2.5, t - 0.5, '#e4f0f0'); }
+        if (state === 'yu' || state === 'matcha_yu') { steam(q, cx - 3, t - 6); steam(q, cx + 1, t - 7); }   // 湯気
+        if (state === 'mizu') { q.pt(cx - 3, t - 0.5, '#d8ecf8'); q.pt(cx - 2.5, t - 0.5, '#d8ecf8'); q.pt(cx + 2, t, '#b8d8ec'); }   // 冷たい水
         if (state === 'usucha') q.speckleDisc(cx, t + 1, 5.5, '#c6dc8c', 0.3, 7);
         if (state === 'matcha') flat(q, cx, t + 2.2, 2.4, '#5d8a2c');
       }
@@ -297,6 +366,8 @@ const PixelArtSide = (() => {
     //   chakin_naname … 右手前へ斜め（蓋置の上の釜の蓋に置いたとき。柄杓と同じ向き。上からの画面で rot 125）
     chakin: { w: 16, h: 12, ax: 8, ay: 6, top: 1, draw(q) { chakinFlat(q, 90); } },
     chakin_naname: { w: 16, h: 12, ax: 8, ay: 6, top: 1, draw(q) { chakinFlat(q, 35); } },
+    // 茶巾を、上から見た向き（rot）のとおりに、斜めに置いた形。state は「|向き」
+    chakin_ang: { w: 16, h: 12, ax: 8, ay: 6, top: 1, draw(q, state) { const a = +String(state || '').split('|')[1] || 0; chakinFlat(q, a - 90); } },
 
     // 茶巾（畳んで、茶碗の奥の壁に立て掛けた形）
     chakin_tate: {
@@ -479,7 +550,7 @@ const PixelArtSide = (() => {
     hishaku_hiki: {
       w: 14, h: 56, ax: 7, ay: 13,
       draw(q, state) {
-        const ro = state === 'ro';
+        const ro = hishakuType0(state) === 'ro';
         const cupR = ro ? 5.5 : 4.5, cupH = ro ? 7 : 6, len = ro ? 50 : 36;
         const end = 13 + 9 + len * K;                       // 柄の先（畳の上、手前）
         q.rect(6.25, 11, 1.5, end - 11, '#b8975a');       // 柄
@@ -496,7 +567,7 @@ const PixelArtSide = (() => {
     hishaku_naname: {
       w: 44, h: 40, ax: 7, ay: 13,
       draw(q, state) {
-        const ro = state === 'ro';
+        const ro = hishakuType0(state) === 'ro';
         const cupR = ro ? 5.5 : 4.5, cupH = ro ? 7 : 6, len = ro ? 50 : 36, a = 35 * Math.PI / 180;
         const x1 = 7 + len * Math.cos(a), y1 = 13 + 9 + len * Math.sin(a) * K;   // 柄の先（畳の上）
         q.line(7, 11, x1, y1, '#b8975a', 0.75);           // 柄
@@ -512,7 +583,7 @@ const PixelArtSide = (() => {
     hishaku_oki: {
       w: 14, h: 44, ax: 7, ay: 13,
       draw(q, state) {
-        const ro = state === 'ro';
+        const ro = hishakuType0(state) === 'ro';
         const cupR = ro ? 5.5 : 4.5, cupH = ro ? 7 : 6, len = ro ? 50 : 36, a = 90 * Math.PI / 180;
         const x0 = 7, y0 = 11;
         const x1 = x0 + len * Math.cos(a), y1 = y0 + len * Math.sin(a) * K + 8;   // 柄の先（少し下がる）
@@ -537,6 +608,71 @@ const PixelArtSide = (() => {
         q.rect(6.25, y0, 1.5, yEnd - y0, '#b8975a');      // 柄
         q.rect(6.25, y0, 0.5, yEnd - y0, '#e2c890');
         q.rect(6.25, yEnd - 0.5, 1.5, 0.5, '#8a6a3a');    // 切止
+      }
+    },
+
+    // ---- 向きを自由につけられる絵（state は「見た目|向き（度）」。向きは上からの画面の rot と同じ。真上が 0、右が 90）----
+    // 柄杓（炉用）を、畳や釜に寝かせて置いた形。合は、柄を向けた向きと反対側。state に fuse が入っていれば、合を伏せる。基準点は合の底
+    hishaku_ang: {
+      w: 130, h: 64, ax: 65, ay: 44, top: 4, inner: 1,
+      draw(q, state) {
+        const [st, a] = String(state || '').split('|'), th = (+a || 0) * Math.PI / 180;
+        const ro = hishakuType0(st) === 'ro', fuse = st.includes('fuse');
+        const cupR = ro ? 5.5 : 4.5, cupH = ro ? 7 : 6, len = ro ? 50 : 36, cx = 65, ay = 44;
+        const ex = len * Math.sin(th), ey = -len * Math.cos(th) * K + 4;     // 柄の先（少し下がる）
+        const y0 = ay - cupH * 0.55;
+        const handle = () => {
+          q.line(cx, y0, cx + ex, y0 + ey, '#b8975a', 0.75);
+          q.line(cx, y0 - 0.4, cx + ex, y0 + ey - 0.4, '#e2c890', 0.25);
+          q.rect(cx + ex - 0.5, y0 + ey - 0.5, 1, 1, '#8a6a3a');             // 切止
+        };
+        const cup = () => {
+          const t = solid(q, cx, ay, new Array(cupH).fill(cupR), BAMBOO);   // 合
+          flat(q, cx, t, cupR, fuse ? '#c9a96c' : '#e8d098');
+          if (fuse) flat(q, cx, t, cupR - 1.2, '#dcc080'); else flat(q, cx, t, cupR - 0.8, '#5a4022');
+        };
+        if (ey < y0) { cup(); handle(); } else { handle(); cup(); }          // 柄が向こうへ伸びるときは、合の後ろ
+      }
+    },
+
+    // 鏡柄杓（炉用）：柄杓をまっすぐ立てて持ち、合の内側を、柄を向けた向き（亭主の方）に向ける。基準点は柄の先（右手で持つ所）
+    hishaku_kagami_ang: {
+      w: 24, h: 60, ax: 12, ay: 56, top: 0,
+      draw(q, state) {
+        const [st, a] = String(state || '').split('|'), th = (+a || 0) * Math.PI / 180;
+        const ro = hishakuType0(st) === 'ro', cupR = ro ? 5.5 : 4.5, len = ro ? 50 : 36, cx = 12, yCup = 56 - len;
+        const dx = Math.sin(th), dy = -Math.cos(th);                        // 合が向く向き
+        q.rect(cx - 0.75, yCup, 1.5, len, '#b8975a');                       // 柄
+        q.rect(cx - 0.75, yCup, 0.5, len, '#e2c890');
+        q.rect(cx - 0.75, 56 - len * 0.45, 1.5, 0.5, '#8a6a3a');            // 節
+        q.rect(cx - 0.75, 55.5, 1.5, 0.5, '#8a6a3a');                       // 切止
+        if (dy > 0.5) {                                                      // 合の内側が、こちら（見る人）を向く
+          q.ellipse(cx, yCup, cupR, cupR, '#a8884e'); q.ellipse(cx, yCup, cupR - 0.6, cupR - 0.6, '#e8d098');
+          q.ellipse(cx + 0.2, yCup + 0.2, cupR - 1.4, cupR - 1.4, '#6e5230'); q.ellipse(cx + 0.4, yCup + 0.4, cupR - 2.4, cupR - 2.4, '#5a4022');
+        } else if (dy < -0.5) {                                              // 合の背中が、こちらを向く
+          q.ellipse(cx, yCup, cupR, cupR, '#a8884e'); q.ellipse(cx, yCup, cupR - 0.8, cupR - 0.8, '#c9a96c');
+        } else {                                                             // 横から見た形（内側が左右どちらかを向く）
+          const sgn = dx < 0 ? -1 : 1, rx = 2.6;
+          q.ellipse(cx, yCup, rx, cupR, '#a8884e');
+          q.ellipse(cx + sgn * 0.9, yCup, rx - 0.8, cupR - 0.6, '#6e5230');   // 内側（向いている側）
+          q.ellipse(cx - sgn * 0.5, yCup, rx - 1.4, cupR - 0.8, '#c9a96c');   // 外側
+        }
+      }
+    },
+
+    // 茶杓を、畳や棗に寝かせて置いた形。櫂先を向けた向きが rot。基準点は節（長さ 約18cm）
+    chashaku_ang: {
+      w: 48, h: 26, ax: 24, ay: 14, top: 1,
+      draw(q, state) {
+        const [st, a] = String(state || '').split('|'), th = (+a || 0) * Math.PI / 180;
+        const ex = 9 * Math.sin(th), ey = -9 * Math.cos(th) * K, cx = 24, cy = 14;
+        q.line(cx - ex, cy - ey, cx + ex, cy + ey, '#c9a96c', 0.75);          // 茶杓の身
+        q.line(cx - ex, cy - ey - 0.4, cx + ex, cy + ey - 0.4, '#e2c890', 0.25);
+        q.ellipse(cx + ex, cy + ey, 2.4, 1.6, '#c9a96c');                      // 櫂先
+        if (st.includes('up')) q.ellipse(cx + ex, cy + ey, 1.6, 1, '#ad8c54'); // くぼみが見える
+        else q.pt(cx + ex - 0.5, cy + ey - 0.5, '#e8d098');
+        q.rect(cx - 0.5, cy - 0.5, 1, 1, '#8a6a3a');                           // 節
+        q.rect(cx - ex - 0.5, cy - ey - 0.5, 1, 1, '#7a5a30');                 // 切止
       }
     },
 

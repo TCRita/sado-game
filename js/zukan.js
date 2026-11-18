@@ -71,6 +71,17 @@ const Zukan = (() => {
       fh.appendChild(enlarged(PixelArtSide.sprite(hostName, tool.state), 130, 130));
       fh.insertAdjacentHTML('beforeend', '<figcaption>亭主の目線</figcaption>');
     } else fh.remove();
+    if (tool.id === 'kashiki') showOkashi(box, tool.state);
+  }
+
+  // 菓子器：盛ってあるお菓子を1つ、大きく見せる
+  function showOkashi(box, state) {
+    const k = PixelArt.kashikiParts(state);
+    const f = document.createElement('figure');
+    f.className = 'p-okashi';
+    f.appendChild(enlarged(PixelArt.sprite('okashi', k.sweet), 192, 192));
+    f.insertAdjacentHTML('beforeend', `<figcaption>${text(PixelArt.SWEET_NAMES[k.sweet])}（${text(PixelArt.VESSELS[k.vessel])}に盛る・いまの月のお菓子）</figcaption>`);
+    box.querySelector('.previews').after(f);
   }
 
   // 分類ごとの道具一覧ボタン

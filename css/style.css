@@ -107,12 +107,18 @@ canvas.view.mini {
   border-radius: 4px;
   z-index: 2;
 }
+/* 小窓を右上に出すとき（ボタンの下に置く） */
+#stage-wrap.mini-top canvas.view.mini { bottom: auto; top: 44px; }
 canvas.view.mini:hover { border-color: #fff; }
-#swap-view {
+#view-btns {
   position: absolute;
   top: 10px;
   right: 14px;
   z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+#view-btns button {
   font: inherit;
   font-size: 12px;
   padding: 4px 10px;
@@ -389,3 +395,8 @@ mark { background: #f6e08a; color: inherit; padding: 0 2px; border-radius: 2px; 
 .jump-box select { flex: 1 1 100%; max-width: 100%; font-size: 13px; padding: 4px; }
 .jump-box input { width: 9em; font-size: 14px; padding: 3px 6px; }
 .jump-err { color: #a0402c; font-size: 13px; }
+
+/* 図鑑：菓子器のお菓子を1つ大きく */
+.p-okashi { margin: 10px 0 4px; text-align: center; }
+.p-okashi canvas { image-rendering: pixelated; background: #efe7d4; border-radius: 10px; padding: 8px; }
+.p-okashi figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }

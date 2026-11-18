@@ -40,7 +40,7 @@ const ViewTop = (() => {
     const name = Scene.topName(it);
     return { sp: PixelArt.sprite(name, it.state), a: PixelArt.anchorOf(name, it.state) };
   }
-  const angleOf = it => -90 + (it.rot || 0);
+  const angleOf = it => -90 + Scene.rotOf(it);
 
   // 画面上で道具が占める四角
   function box(it) {
@@ -67,7 +67,7 @@ const ViewTop = (() => {
     const photo = photos[it.tool.id];
     if (photo) {
       const s = it.tool.size || { w: 20, h: 20 };
-      ctx.rotate((it.rot || 0) * Math.PI / 180);      // 写真は画面の向きのまま使う
+      ctx.rotate(Scene.rotOf(it) * Math.PI / 180);      // 写真は画面の向きのまま使う
       ctx.imageSmoothingEnabled = true;
       ctx.drawImage(photo, -s.w / 2, -s.h / 2, s.w, s.h);
       ctx.imageSmoothingEnabled = false;

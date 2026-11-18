@@ -18,6 +18,7 @@
       <button data-mode="steps">手順一覧</button>
     </nav>
     <a class="museum-link" href="museum.html">お道具の美術館 →</a>
+    <a class="museum-link" href="okashi.html">お菓子の美術館 →</a>
     <label class="temae-select">お点前：<select id="temae-select"></select></label>
   </header>
 
@@ -29,7 +30,10 @@
     <section id="stage-wrap">
       <canvas id="view-top" class="view main"></canvas>
       <canvas id="view-host" class="view mini"></canvas>
-      <button id="swap-view">亭主の目線を大きく</button>
+      <div id="view-btns">
+        <button id="corner-view">小窓を右上へ</button>
+        <button id="swap-view">亭主の目線を大きく</button>
+      </div>
       <div id="tooltip" hidden></div>
       <label class="label-toggle"><input type="checkbox" id="show-labels" checked> 場所の名前を表示</label>
       <div id="banner" hidden></div>

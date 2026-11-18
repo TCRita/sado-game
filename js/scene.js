@@ -18,6 +18,10 @@ const Scene = (() => {
   }
   function hostName(it) {
     const base = it.tool.sprite || it.tool.id;
+    // 炉の柄杓と、斜めに置いた茶杓は、上から見た向きのとおりに（斜めに）横から見た絵を描く
+    if (base === 'hishaku' && /(^|-)ro($|-)/.test(String(it.state || ''))) return it.pose === 'kagami' ? 'hishaku_kagami_ang' : 'hishaku_ang';
+    if (base === 'chashaku' && (((it.rot || 0) % 180) + 180) % 180 !== 0) return 'chashaku_ang';
+    if (base === 'chakin' && it.pose === 'naname') return 'chakin_ang';
     if (it.pose && PixelArtSide.has(base + '_' + it.pose)) return base + '_' + it.pose;
     if (base === 'hishaku') {
       const r = (((it.rot || 0) % 360) + 360) % 360;      // 横向き（右か左）に近ければ、横に寝かせた形。斜めに掛けたときも、これを使う
@@ -32,10 +36,22 @@ const Scene = (() => {
   }
 
   // ---- 位置 ----
+  // 人（亭主）につけた物（腰の帛紗など）と、茶碗に仕組んだ物（茶巾・茶筅・茶杓）の位置は、
+  // 「真上を向いたとき」の位置で書いておき、人や茶碗の向きに合わせて一緒に回す（一心同体）
+  const turnsKids = t => !!(t.person || t.id === 'chawan');
+  const onTurner = it => !!(it.parent && items[it.parent] && turnsKids(items[it.parent].tool));
+  function rotOf(it) {
+    return (it.rot || 0) + (onTurner(it) ? rotOf(items[it.parent]) : 0);
+  }
   function pos(it) {
     if (it.parent && items[it.parent]) {
       const p = items[it.parent], pp = pos(p), h = heights(p);
-      return { x: pp.x + it.dx, y: pp.y + it.dy, z: pp.z + (it.how === 'in' ? h.inner : h.top) + it.dz };
+      let dx = it.dx, dy = it.dy;
+      if (turnsKids(p.tool) && rotOf(p)) {
+        const a = rotOf(p) * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
+        dx = it.dx * c - it.dy * s; dy = it.dx * s + it.dy * c;
+      }
+      return { x: pp.x + dx, y: pp.y + dy, z: pp.z + (it.how === 'in' ? h.inner : h.top) + it.dz };
     }
     return { x: it.x, y: it.y, z: it.z };
   }
@@ -152,7 +168,7 @@ const Scene = (() => {
   }
 
   return {
-    load, loadZukan, move, runEffects, tick, pos, topName, hostName,
+    load, loadZukan, move, runEffects, tick, pos, rotOf, topName, hostName,
     item: id => items[id], roots, childrenOf, topOrder, isHidden, nearPlace,
     place: n => places[n], busy: () => tweens.length > 0,
     setInstant(v) { instant = v; }
